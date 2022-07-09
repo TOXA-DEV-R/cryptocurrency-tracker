@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { makeStyles, Typography } from "@material-ui/core";
 import { Container } from "@mui/material";
+import Carousel from "./Carousel";
 
 const useStaye = makeStyles(() => ({
   banner: {
@@ -51,6 +52,7 @@ const Banner: FC = () => {
             Get all the Info regarding your favorite Crypto Currency
           </Typography>
         </div>
+        <Carousel />
       </Container>
     </div>
   );
