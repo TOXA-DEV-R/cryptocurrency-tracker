@@ -10,6 +10,7 @@ import "swiper/css/pagination";
 import { CircularProgress, Box } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import { Autoplay } from "swiper";
+import { numberWithCommas } from "../../helper/number-with-commas";
 
 const useStyles = makeStyles(() => ({
   carouselLoading: {
@@ -36,6 +37,9 @@ interface DataTypes {
   image: string;
   name: string;
   id: string;
+  symbol: string;
+  market_cap_change_percentage_24h: number;
+  current_price: number;
 }
 
 const Carousel: FC = () => {
@@ -63,22 +67,42 @@ const Carousel: FC = () => {
           modules={[Autoplay]}
           className="basic-carousel"
         >
-          {(data as DataTypes[]).map((item) => (
-            <SwiperSlide
-              className={classes.carouselItem}
-              onClick={() => navigate(`/coins/${item.id}`)}
-              key={item.id}
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                height={80}
-                style={{
-                  marginBottom: 10,
-                }}
-              />
-            </SwiperSlide>
-          ))}
+          {(data as DataTypes[]).map((coin) => {
+            const profit: boolean = coin.market_cap_change_percentage_24h >= 0;
+
+            return (
+              <SwiperSlide
+                className={classes.carouselItem}
+                onClick={() => navigate(`/coins/${coin.id}`)}
+                key={coin.id}
+              >
+                <img
+                  src={coin.image}
+                  alt={coin.name}
+                  height={80}
+                  style={{
+                    marginBottom: 10,
+                  }}
+                />
+                <span>
+                  {coin.symbol} &nbsp;
+                  <span
+                    style={{
+                      color: profit ? "rgb(14,203,129)" : "red",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {profit && "+"}
+                    {coin.market_cap_change_percentage_24h.toFixed(2)}%
+                  </span>
+                </span>
+                <span style={{ fontSize: 22, fontWeight: 500 }}>
+                  {controlMoney.symbol}{" "}
+                  {numberWithCommas(coin.current_price.toFixed(2))}
+                </span>
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </div>
     );
