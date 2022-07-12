@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { createTheme } from "@material-ui/core";
 import { useAppDispatch } from "../../app/hooks";
 import { controlCurrency } from "../../features/control-money/controlMoneySlice";
+import AuthModal from "../authentication/auth-modal";
 
 const useStyle = makeStyles(() => ({
   select: {
@@ -71,11 +72,11 @@ const Header: FC = () => {
               variant="outlined"
               className={classes.select}
               onChange={handleChange}
-              //   onClick={()=>}
             >
               <MenuItem value="USD">USD</MenuItem>
               <MenuItem value="INR">INR</MenuItem>
             </Select>
+            <AuthModal />
           </Toolbar>
         </Container>
       </AppBar>

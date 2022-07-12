@@ -1,11 +1,7 @@
 /** @format */
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface controlMoney {
-  currency: string;
-  symbol: string;
-}
+import { controlMoney } from "../../types";
 
 const initialState: controlMoney = {
   currency: "USD",

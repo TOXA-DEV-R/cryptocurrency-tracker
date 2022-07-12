@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";
 import { useCoinsListQuery } from "../features/fetch-trending-coins/fetch-coins-slice";
 import { numberWithCommas } from "../helper/number-with-commas";
+import { CoinsTableDataTypes } from "../types";
 
 const useStyles = makeStyles(() => ({
   carouselLoading: {
@@ -44,21 +45,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface DataTypes {
-  image: string;
-  name: string;
-  id: string;
-  symbol: string;
-  market_cap_change_percentage_24h: number;
-  price_change_percentage_24h: number;
-  current_price: number;
-  market_cap: number;
-}
-
 const CoinsTable: FC = () => {
   const [search, setSearch] = useState<string>("");
   const { controlMoney } = useAppSelector((state) => state);
-  const { data = [], isLoading } = useCoinsListQuery(controlMoney.currency);
+  const { data, isLoading } = useCoinsListQuery(controlMoney.currency);
   const [page, setPage] = useState<number>(1);
 
   const navigate = useNavigate();
@@ -73,12 +63,16 @@ const CoinsTable: FC = () => {
     },
   });
 
-  const handleSearch = (): [] => {
-    return data.filter(
-      (coin: { name: string; symbol: string }) =>
-        coin.name.toLowerCase().includes(search) ||
-        coin.symbol.toLowerCase().includes(search)
-    );
+  const handleSearch = (): CoinsTableDataTypes[] | [] => {
+    if (data) {
+      return data.filter(
+        (coin: { name: string; symbol: string }) =>
+          coin.name.toLowerCase().includes(search) ||
+          coin.symbol.toLowerCase().includes(search)
+      );
+    } else {
+      return [];
+    }
   };
 
   return (
@@ -133,7 +127,7 @@ const CoinsTable: FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(handleSearch() as DataTypes[])
+                {handleSearch()
                   .slice((page - 1) * 10, (page - 1) * 10 + 10)
                   .map((item) => {
                     const profit = item.market_cap_change_percentage_24h >= 0;
