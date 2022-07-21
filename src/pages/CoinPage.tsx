@@ -11,8 +11,14 @@ import { useParams } from "react-router-dom";
 import CoinInfo from "../components/CoinInfo";
 import { useSingleCoinQuery } from "../features/fetch-trending-coins/fetch-coins-slice";
 import parse from "html-react-parser";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { numberWithCommas } from "../helper/number-with-commas";
+import { useGlobalContext } from "../context/context";
+import { Button } from "@mui/material";
+import { addWatchList } from "../features/watch-list/watch-list";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { controlAlertModal } from "../features/alert-modal/alert-modal-slice";
 
 const useStyles = makeStyles((theme) => ({
   carouselLoading: {
@@ -74,7 +80,40 @@ const CoinPage: FC = () => {
   const { id } = useParams();
   const { data, isLoading } = useSingleCoinQuery(String(id));
   const classes = useStyles();
-  const { controlMoney } = useAppSelector((state) => state);
+  const { controlMoney, watchList, alertModal } = useAppSelector(
+    (state) => state
+  );
+  const { user } = useGlobalContext();
+  const dispatch = useAppDispatch();
+
+  const inWatchList = watchList.includes(data?.id);
+
+  const getIdForWatchList = async (): Promise<void> => {
+    const coinRef = doc(db, "watchList", user.uid);
+
+    try {
+      await setDoc(coinRef, {
+        coins: watchList ? [...watchList, data.id] : [data?.id],
+      });
+
+      dispatch(addWatchList(data?.id));
+      dispatch(
+        controlAlertModal({
+          open: true,
+          message: `${data?.name} Added to the WatchList !`,
+          type: "success",
+        })
+      );
+    } catch (error) {
+      dispatch(
+        controlAlertModal({
+          open: true,
+          message: `${data?.message}`,
+          type: "error",
+        })
+      );
+    }
+  };
 
   if (isLoading) {
     return (
@@ -156,6 +195,20 @@ const CoinPage: FC = () => {
                 M
               </Typography>
             </span>
+            {user && (
+              <Button
+                sx={{
+                  width: "100%",
+                  height: 40,
+                  backgroundColor: "#EEBC1D",
+                }}
+                onClick={getIdForWatchList}
+              >
+                {`${
+                  inWatchList ? "Remove from Watchlist" : "Add to WatchList"
+                }`}
+              </Button>
+            )}
           </div>
         </aside>
         <CoinInfo coinId={data.id} />

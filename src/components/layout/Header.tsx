@@ -16,9 +16,11 @@ import {
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTheme } from "@material-ui/core";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { controlCurrency } from "../../features/control-money/controlMoneySlice";
 import AuthModal from "../authentication/auth-modal";
+import UserSidebar from "../authentication/user-sidebar";
+import { useGlobalContext } from "../../context/context";
 
 const useStyle = makeStyles(() => ({
   select: {
@@ -39,6 +41,7 @@ const Header: FC = () => {
   const classes = useStyle();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { user } = useGlobalContext();
 
   const darkTheme = createTheme({
     palette: {
@@ -76,7 +79,7 @@ const Header: FC = () => {
               <MenuItem value="USD">USD</MenuItem>
               <MenuItem value="INR">INR</MenuItem>
             </Select>
-            <AuthModal />
+            {user ? <UserSidebar /> : <AuthModal />}
           </Toolbar>
         </Container>
       </AppBar>

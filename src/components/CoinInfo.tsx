@@ -66,7 +66,7 @@ const CoinInfo: FC<CoinInfoProps> = ({ coinId }) => {
     days,
     currency: controlMoney.currency,
   });
-  console.log(data);
+
   const basicData: any[] = data?.prices;
 
   const darkTheme = createTheme({

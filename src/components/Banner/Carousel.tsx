@@ -27,7 +27,6 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    cursor: "pointer",
     textTransform: "uppercase",
     color: "white",
   },
@@ -71,35 +70,39 @@ const Carousel: FC = () => {
             const profit: boolean = coin.market_cap_change_percentage_24h >= 0;
 
             return (
-              <SwiperSlide
-                className={classes.carouselItem}
-                onClick={() => navigate(`/coins/${coin.id}`)}
-                key={coin.id}
-              >
-                <img
-                  src={coin.image}
-                  alt={coin.name}
-                  height={80}
+              <SwiperSlide className={classes.carouselItem} key={coin.id}>
+                <div
                   style={{
+                    width: 150,
                     marginBottom: 10,
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textTransform: "uppercase",
+                    color: "white",
                   }}
-                />
-                <span>
-                  {coin.symbol} &nbsp;
-                  <span
-                    style={{
-                      color: profit ? "rgb(14,203,129)" : "red",
-                      fontWeight: 500,
-                    }}
-                  >
-                    {profit && "+"}
-                    {coin.market_cap_change_percentage_24h.toFixed(2)}%
+                  onClick={() => navigate(`/coins/${coin.id}`)}
+                >
+                  {" "}
+                  <img src={coin.image} alt={coin.name} height={80} />
+                  <span>
+                    {coin.symbol} &nbsp;
+                    <span
+                      style={{
+                        color: profit ? "rgb(14,203,129)" : "red",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {profit && "+"}
+                      {coin.market_cap_change_percentage_24h.toFixed(2)}%
+                    </span>
                   </span>
-                </span>
-                <span style={{ fontSize: 22, fontWeight: 500 }}>
-                  {controlMoney.symbol}{" "}
-                  {numberWithCommas(coin.current_price.toFixed(2))}
-                </span>
+                  <span style={{ fontSize: 22, fontWeight: 500 }}>
+                    {controlMoney.symbol}{" "}
+                    {numberWithCommas(coin.current_price.toFixed(2))}
+                  </span>
+                </div>
               </SwiperSlide>
             );
           })}
